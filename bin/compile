@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+
+echo "Running cache test..."
+
+BUILD_DIR=$1
+CACHE_DIR=$2
+BUILD_PACK_DIR=$(dirname $(dirname $0))
+
+echo "All arguments [$@]"
+
+echo "Build directory contents..."
+ls -laRh $BUILD_DIR
+
+echo
+echo "Home Directory:"
+ls -laRh "/home"
+
+echo "Listing Build Pack Directory:"
+ls -la /tmp/buildpacks
+
+echo "The compile script is at [$0]"
+echo "The build pack is situated at [$BUILD_PACK_DIR]"
+
+echo "Listing Environment:"
+env
+
+echo "Who am i?"
+whoami
+
+echo "Disk Usage:"
+df -h
+
+echo "Listing OS Info:"
+cat /etc/issue
+
+echo "Listing script versions:"
+python -V
+echo
+ruby -v
+echo
+perl -v
+
+echo "User Limits:"
+ulimit -a
+echo
+
+echo "Creating start script"
+cat > "$BUILD_DIR/start.sh" <<EOF
+#!/usr/bin/env bash
+# Start Python Server
+
+echo "Listing Environment:"
+env
+
+echo "Directory listing:"
+ls -la
+
+echo "$CF_INSTANCE_PORT"
+
+echo "Starting Web Server"
+python -m SimpleHTTPServer 8080
+
+EOF
+chmod 755 "$BUILD_DIR/start.sh"
